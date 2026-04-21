@@ -9,18 +9,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Bad+Script&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
-  body {
+  html, body {
     margin: 0;
     padding: 0;
     background: transparent;
+    overflow: hidden; /* 🚀 removes all scrollbars */
     font-family: 'Inter', sans-serif;
-    display: flex;
-    justify-content: center;
   }
 
   .wrapper {
     width: 100%;
     max-width: 600px;
+    margin: 0 auto;
     padding: 0 20px;
     box-sizing: border-box;
   }
@@ -60,7 +60,7 @@
     opacity: 0.6;
   }
 
-  /* Animation */
+  /* animation */
   .step {
     opacity: 0;
     transform: translateY(10px);
@@ -76,22 +76,10 @@
     display: none;
   }
 
-  .reset-container {
-    width: 100%;
-    max-width: 600px;
-    padding: 10px 20px 0;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  @media (min-width: 768px) {
-    .reset-container {
-      padding: 10px 40px 0;
-    }
-  }
-
+  /* reset BELOW card */
   .reset {
+    text-align: right;
+    margin-top: 10px;
     font-size: 16px;
     color: #000;
     cursor: pointer;
@@ -103,28 +91,26 @@
 <body>
 
 <div class="wrapper">
+
   <div class="card">
 
-    <!-- STEP 1 -->
     <div id="step1" class="step visible">
       <textarea id="input1" rows="1" placeholder="Set your intention"></textarea>
     </div>
 
-    <!-- STEP 2 -->
     <div id="step2" class="step hidden">
       <textarea id="input2" rows="1" placeholder="Choose your next action"></textarea>
     </div>
 
-    <!-- STEP 3 -->
     <div id="step3" class="step hidden">
       <textarea id="input3" rows="1" placeholder="Choose your mindset"></textarea>
     </div>
 
   </div>
-</div>
 
-<div class="reset-container">
+  <!-- ✅ NOW properly under box -->
   <div class="reset" onclick="resetAll()">Reset</div>
+
 </div>
 
 <script>
@@ -142,11 +128,31 @@ function autoResize(el) {
   el.style.height = el.scrollHeight + "px";
 }
 
-// --- SAVE ---
+// --- SAFE SAVE (fix for Draftbit timing issues) ---
 function saveData() {
-  localStorage.setItem("intention1", input1.value);
-  localStorage.setItem("intention2", input2.value);
-  localStorage.setItem("intention3", input3.value);
+  try {
+    localStorage.setItem("intention1", input1.value || "");
+    localStorage.setItem("intention2", input2.value || "");
+    localStorage.setItem("intention3", input3.value || "");
+  } catch(e) {}
+}
+
+// --- LOAD ---
+function loadData() {
+  const val1 = localStorage.getItem("intention1") || "";
+  const val2 = localStorage.getItem("intention2") || "";
+  const val3 = localStorage.getItem("intention3") || "";
+
+  input1.value = val1;
+  input2.value = val2;
+  input3.value = val3;
+
+  autoResize(input1);
+  autoResize(input2);
+  autoResize(input3);
+
+  if (val1.trim()) showStep(step2);
+  if (val2.trim()) showStep(step3);
 }
 
 // --- SHOW STEP ---
@@ -157,26 +163,7 @@ function showStep(step) {
   }
 }
 
-// --- LOAD ---
-function loadData() {
-  input1.value = localStorage.getItem("intention1") || "";
-  input2.value = localStorage.getItem("intention2") || "";
-  input3.value = localStorage.getItem("intention3") || "";
-
-  autoResize(input1);
-  autoResize(input2);
-  autoResize(input3);
-
-  if (input1.value.trim()) {
-    showStep(step2);
-  }
-
-  if (input2.value.trim()) {
-    showStep(step3);
-  }
-}
-
-// --- INPUT EVENTS ---
+// --- EVENTS ---
 [input1, input2, input3].forEach(input => {
   input.addEventListener("input", () => {
     autoResize(input);
@@ -185,15 +172,11 @@ function loadData() {
 });
 
 input1.addEventListener("input", () => {
-  if (input1.value.trim()) {
-    showStep(step2);
-  }
+  if (input1.value.trim()) showStep(step2);
 });
 
 input2.addEventListener("input", () => {
-  if (input2.value.trim()) {
-    showStep(step3);
-  }
+  if (input2.value.trim()) showStep(step3);
 });
 
 // --- RESET ---
