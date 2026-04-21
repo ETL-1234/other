@@ -160,10 +160,10 @@ function loadData() {
 
 // --- SHOW STEP ---
 function showStep(step) {
-  if (!step.classList.contains("visible")) {
-    step.classList.remove("hidden");
-    setTimeout(() => step.classList.add("visible"), 10);
-  }
+  step.classList.remove("hidden");
+  requestAnimationFrame(() => {
+    step.classList.add("visible");
+  });
 }
 
 // --- EVENTS ---
