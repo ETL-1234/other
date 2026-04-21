@@ -167,10 +167,12 @@ if (val2.trim()) {
 
 // --- SHOW STEP ---
 function showStep(step) {
-  step.classList.remove("hidden");
-  requestAnimationFrame(() => {
-    step.classList.add("visible");
-  });
+  if (!step.classList.contains("visible")) {
+    step.classList.remove("hidden");
+    requestAnimationFrame(() => {
+      step.classList.add("visible");
+    });
+  }
 }
 
 // --- EVENTS ---
