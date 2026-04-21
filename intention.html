@@ -6,7 +6,6 @@
 
 <title>Intention Box</title>
 
-<!-- Fonts -->
 <link href="https://fonts.googleapis.com/css2?family=Bad+Script&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
 <style>
@@ -26,7 +25,6 @@
     box-sizing: border-box;
   }
 
-  /* More breathing space on tablets */
   @media (min-width: 768px) {
     .wrapper {
       padding: 0 40px;
@@ -48,7 +46,7 @@
     font-size: 18px;
     color: #000;
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
 
   textarea {
@@ -61,10 +59,23 @@
     font-family: 'Inter', sans-serif;
     text-align: center;
     overflow: hidden;
+    line-height: 1.4;
   }
 
   textarea::placeholder {
     color: #999;
+  }
+
+  /* Animation */
+  .step {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.35s ease;
+  }
+
+  .step.visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .hidden {
@@ -101,19 +112,19 @@
   <div class="card">
 
     <!-- STEP 1 -->
-    <div id="step1">
+    <div id="step1" class="step visible">
       <div class="prompt">Set your intention</div>
-      <textarea id="input1" rows="1" placeholder=""></textarea>
+      <textarea id="input1" rows="1"></textarea>
     </div>
 
     <!-- STEP 2 -->
-    <div id="step2" class="hidden">
+    <div id="step2" class="step hidden">
       <div class="prompt">Choose your next action</div>
       <textarea id="input2" rows="1"></textarea>
     </div>
 
     <!-- STEP 3 -->
-    <div id="step3" class="hidden">
+    <div id="step3" class="step hidden">
       <div class="prompt">Choose your mindset</div>
       <textarea id="input3" rows="1"></textarea>
     </div>
@@ -127,47 +138,103 @@
 
 <script>
 
+const input1 = document.getElementById("input1");
+const input2 = document.getElementById("input2");
+const input3 = document.getElementById("input3");
+
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+
+// --- AUTO RESIZE ---
 function autoResize(el) {
   el.style.height = "auto";
   el.style.height = el.scrollHeight + "px";
 }
 
-// Step progression
-const input1 = document.getElementById("input1");
-const input2 = document.getElementById("input2");
-const input3 = document.getElementById("input3");
+// --- SAVE ---
+function saveData() {
+  localStorage.setItem("intention1", input1.value);
+  localStorage.setItem("intention2", input2.value);
+  localStorage.setItem("intention3", input3.value);
+}
+
+// --- LOAD ---
+function loadData() {
+  input1.value = localStorage.getItem("intention1") || "";
+  input2.value = localStorage.getItem("intention2") || "";
+  input3.value = localStorage.getItem("intention3") || "";
+
+  autoResize(input1);
+  autoResize(input2);
+  autoResize(input3);
+
+  if (input1.value.trim()) {
+    showStep(step2);
+  }
+
+  if (input2.value.trim()) {
+    showStep(step3);
+  }
+}
+
+// --- SHOW STEP WITH ANIMATION ---
+function showStep(step) {
+  step.classList.remove("hidden");
+  setTimeout(() => {
+    step.classList.add("visible");
+  }, 10);
+}
+
+// --- INPUT EVENTS ---
+[input1, input2, input3].forEach(input => {
+  input.addEventListener("input", () => {
+    autoResize(input);
+    saveData();
+  });
+});
 
 input1.addEventListener("input", () => {
-  autoResize(input1);
   if (input1.value.trim().length > 0) {
-    document.getElementById("step2").classList.remove("hidden");
+    showStep(step2);
   }
 });
 
 input2.addEventListener("input", () => {
-  autoResize(input2);
   if (input2.value.trim().length > 0) {
-    document.getElementById("step3").classList.remove("hidden");
+    showStep(step3);
   }
 });
 
-input3.addEventListener("input", () => {
-  autoResize(input3);
-});
-
-// Reset
+// --- RESET ---
 function resetAll() {
   input1.value = "";
   input2.value = "";
   input3.value = "";
 
+  localStorage.clear();
+
   autoResize(input1);
   autoResize(input2);
   autoResize(input3);
 
-  document.getElementById("step2").classList.add("hidden");
-  document.getElementById("step3").classList.add("hidden");
+  step2.classList.remove("visible");
+  step3.classList.remove("visible");
+
+  setTimeout(() => {
+    step2.classList.add("hidden");
+    step3.classList.add("hidden");
+  }, 300);
 }
+
+// --- INIT ---
+window.onload = () => {
+  loadData();
+
+  // Force focus fix for WebView
+  setTimeout(() => {
+    input1.focus();
+  }, 300);
+};
 
 </script>
 
