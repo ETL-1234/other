@@ -177,10 +177,14 @@ function showStep(step) {
 
 // --- EVENTS ---
 [input1, input2, input3].forEach(input => {
-  input.addEventListener("input", () => {
-    autoResize(input);
-    saveData();
-  });
+  input.addEventListener("input", handleInput);
+  input.addEventListener("blur", handleInput);
+});
+
+function handleInput() {
+  autoResize(this);
+  saveData();
+}
 });
 
 input1.addEventListener("input", () => {
