@@ -188,8 +188,8 @@ function showStep(step) {
   input.addEventListener("blur", handleInput);
 });
 
-function handleInput() {
-  autoResize(this);
+function handleInput(e) {
+  autoResize(e.target);
   saveData();
 }
  
