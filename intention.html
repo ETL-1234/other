@@ -184,8 +184,8 @@ function showStep(step) {
 
 // --- EVENTS ---
 [input1, input2, input3].forEach(input => {
-  input.addEventListener("input", handleInput);
-  input.addEventListener("blur", handleInput);
+  input.addEventListener("input", (e) => handleInput(e));
+  input.addEventListener("blur", (e) => handleInput(e));
 });
 
 function handleInput(e) {
