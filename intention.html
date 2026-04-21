@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Intention Box</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Bad+Script&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    justify-content: center;
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  /* More breathing space on tablets */
+  @media (min-width: 768px) {
+    .wrapper {
+      padding: 0 40px;
+    }
+  }
+
+  .card {
+    background: #F8F3EF;
+    border-radius: 16px;
+    min-height: 160px;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prompt {
+    font-family: 'Bad Script', cursive;
+    font-size: 18px;
+    color: #000;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  textarea::placeholder {
+    color: #999;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  .reset-container {
+    width: 100%;
+    max-width: 600px;
+    padding: 8px 20px 0;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  @media (min-width: 768px) {
+    .reset-container {
+      padding: 8px 40px 0;
+    }
+  }
+
+  .reset {
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+  }
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+  <div class="card">
+
+    <!-- STEP 1 -->
+    <div id="step1">
+      <div class="prompt">Set your intention</div>
+      <textarea id="input1" rows="1" placeholder=""></textarea>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="step2" class="hidden">
+      <div class="prompt">Choose your next action</div>
+      <textarea id="input2" rows="1"></textarea>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="step3" class="hidden">
+      <div class="prompt">Choose your mindset</div>
+      <textarea id="input3" rows="1"></textarea>
+    </div>
+
+  </div>
+</div>
+
+<div class="reset-container">
+  <div class="reset" onclick="resetAll()">Reset</div>
+</div>
+
+<script>
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
+// Step progression
+const input1 = document.getElementById("input1");
+const input2 = document.getElementById("input2");
+const input3 = document.getElementById("input3");
+
+input1.addEventListener("input", () => {
+  autoResize(input1);
+  if (input1.value.trim().length > 0) {
+    document.getElementById("step2").classList.remove("hidden");
+  }
+});
+
+input2.addEventListener("input", () => {
+  autoResize(input2);
+  if (input2.value.trim().length > 0) {
+    document.getElementById("step3").classList.remove("hidden");
+  }
+});
+
+input3.addEventListener("input", () => {
+  autoResize(input3);
+});
+
+// Reset
+function resetAll() {
+  input1.value = "";
+  input2.value = "";
+  input3.value = "";
+
+  autoResize(input1);
+  autoResize(input2);
+  autoResize(input3);
+
+  document.getElementById("step2").classList.add("hidden");
+  document.getElementById("step3").classList.add("hidden");
+}
+
+</script>
+
+</body>
+</html>
