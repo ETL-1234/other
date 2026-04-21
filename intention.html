@@ -188,13 +188,19 @@ function handleInput() {
 });
 
 input1.addEventListener("input", () => {
-  if (input1.value.trim()) showStep(step2);
+  if (input1.value.trim()) {
+    showStep(step2);
+    saveData(); // ✅ force save here
+  }
 });
 
 input2.addEventListener("input", () => {
-  if (input2.value.trim()) showStep(step3);
+  if (input2.value.trim()) {
+    showStep(step3);
+    saveData(); // ✅ force save here
+  }
 });
-
+  
 // --- RESET ---
 function resetAll() {
   input1.value = "";
