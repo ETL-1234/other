@@ -154,8 +154,13 @@ function loadData() {
   autoResize(input2);
   autoResize(input3);
 
-  if (val1.trim()) showStep(step2);
-  if (val2.trim()) showStep(step3);
+ if (val1.trim()) {
+  showStep(step2);
+}
+
+if (val2.trim()) {
+  showStep(step2);
+  showStep(step3);
 }
 
 // --- SHOW STEP ---
