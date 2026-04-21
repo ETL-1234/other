@@ -39,14 +39,7 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-  }
-
-  .prompt {
-    font-family: 'Bad Script', cursive;
-    font-size: 18px;
-    color: #000;
-    text-align: center;
-    margin-bottom: 8px;
+    gap: 12px;
   }
 
   textarea {
@@ -55,15 +48,16 @@
     outline: none;
     resize: none;
     background: transparent;
-    font-size: 16px;
+    font-size: 18px;
     font-family: 'Bad Script', cursive;
     text-align: center;
     overflow: hidden;
-    line-height: 1.4;
+    line-height: 1.5;
   }
 
   textarea::placeholder {
-    color: #999;
+    color: #000;
+    opacity: 0.6;
   }
 
   /* Animation */
@@ -85,7 +79,7 @@
   .reset-container {
     width: 100%;
     max-width: 600px;
-    padding: 8px 20px 0;
+    padding: 10px 20px 0;
     box-sizing: border-box;
     display: flex;
     justify-content: flex-end;
@@ -93,7 +87,7 @@
 
   @media (min-width: 768px) {
     .reset-container {
-      padding: 8px 40px 0;
+      padding: 10px 40px 0;
     }
   }
 
@@ -113,20 +107,17 @@
 
     <!-- STEP 1 -->
     <div id="step1" class="step visible">
-      <div class="prompt">Set your intention</div>
-      <textarea id="input1" rows="1"></textarea>
+      <textarea id="input1" rows="1" placeholder="Set your intention"></textarea>
     </div>
 
     <!-- STEP 2 -->
     <div id="step2" class="step hidden">
-      <div class="prompt">Choose your next action</div>
-      <textarea id="input2" rows="1"></textarea>
+      <textarea id="input2" rows="1" placeholder="Choose your next action"></textarea>
     </div>
 
     <!-- STEP 3 -->
     <div id="step3" class="step hidden">
-      <div class="prompt">Choose your mindset</div>
-      <textarea id="input3" rows="1"></textarea>
+      <textarea id="input3" rows="1" placeholder="Choose your mindset"></textarea>
     </div>
 
   </div>
@@ -158,6 +149,14 @@ function saveData() {
   localStorage.setItem("intention3", input3.value);
 }
 
+// --- SHOW STEP ---
+function showStep(step) {
+  if (!step.classList.contains("visible")) {
+    step.classList.remove("hidden");
+    setTimeout(() => step.classList.add("visible"), 10);
+  }
+}
+
 // --- LOAD ---
 function loadData() {
   input1.value = localStorage.getItem("intention1") || "";
@@ -177,14 +176,6 @@ function loadData() {
   }
 }
 
-// --- SHOW STEP WITH ANIMATION ---
-function showStep(step) {
-  step.classList.remove("hidden");
-  setTimeout(() => {
-    step.classList.add("visible");
-  }, 10);
-}
-
 // --- INPUT EVENTS ---
 [input1, input2, input3].forEach(input => {
   input.addEventListener("input", () => {
@@ -194,13 +185,13 @@ function showStep(step) {
 });
 
 input1.addEventListener("input", () => {
-  if (input1.value.trim().length > 0) {
+  if (input1.value.trim()) {
     showStep(step2);
   }
 });
 
 input2.addEventListener("input", () => {
-  if (input2.value.trim().length > 0) {
+  if (input2.value.trim()) {
     showStep(step3);
   }
 });
@@ -211,7 +202,9 @@ function resetAll() {
   input2.value = "";
   input3.value = "";
 
-  localStorage.clear();
+  localStorage.removeItem("intention1");
+  localStorage.removeItem("intention2");
+  localStorage.removeItem("intention3");
 
   autoResize(input1);
   autoResize(input2);
@@ -230,7 +223,6 @@ function resetAll() {
 window.onload = () => {
   loadData();
 
-  // Force focus fix for WebView
   setTimeout(() => {
     input1.focus();
   }, 300);
