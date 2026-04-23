@@ -187,24 +187,17 @@ function showStep(step) {
 });
 
 function handleInput(e) {
-  autoResize(e.target);
+   autoResize(e.target);
   saveData();
-}
- 
 
-input1.addEventListener("input", () => {
   if (input1.value.trim()) {
     showStep(step2);
-    saveData(); // ✅ force save here
   }
-});
 
-input2.addEventListener("input", () => {
   if (input2.value.trim()) {
     showStep(step3);
-    saveData(); // ✅ force save here
   }
-});
+}
   
 // --- RESET ---
 function resetAll() {
