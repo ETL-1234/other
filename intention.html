@@ -147,20 +147,15 @@ function saveData() {
 
 // --- LOAD ---
 function loadData() {
-  const val1 = localStorage.getItem("intention1") || "";
-  const val2 = localStorage.getItem("intention2") || "";
-  const val3 = localStorage.getItem("intention3") || "";
-
-  input1.value = val1;
-  input2.value = val2;
-  input3.value = val3;
+  input1.value = localStorage.getItem("intention1") || "";
+  input2.value = localStorage.getItem("intention2") || "";
+  input3.value = localStorage.getItem("intention3") || "";
 
   autoResize(input1);
   autoResize(input2);
   autoResize(input3);
 
-  if (val1.trim()) showStep(step2);
-  if (val2.trim()) showStep(step3);
+  updateUI(); // 🔥 THIS is what you were missing
 }
 
 
