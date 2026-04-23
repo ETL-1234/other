@@ -85,13 +85,30 @@
 
 
   /* reset upper right */
-  .reset {
+ .reset {
   position: absolute;
-  top: 4px;
+  top: 6px;
   right: 20px;
-  font-size: 14px;
-  color: #5c6b5c;
   cursor: pointer;
+
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.reset svg {
+  fill: #5c6b5c;
+}
+
+.reset:hover {
+  background: rgba(0,0,0,0.05);
+  transform: rotate(-20deg);
 }
 
 </style>
