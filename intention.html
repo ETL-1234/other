@@ -185,22 +185,16 @@ function resetAll() {
   input2.value = "";
   input3.value = "";
 
-  localStorage.removeItem("intention1");
-  localStorage.removeItem("intention2");
-  localStorage.removeItem("intention3");
+  localStorage.clear();
 
   autoResize(input1);
   autoResize(input2);
   autoResize(input3);
 
-  step2.classList.remove("visible");
-  step3.classList.remove("visible");
-
-    step2.classList.add("hidden");
-    step3.classList.add("hidden");
+  updateUI();
 
   input1.focus();
-  }
+}
 
 // --- INIT ---
 window.onload = () => {
