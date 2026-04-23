@@ -66,20 +66,22 @@
   }
 
   /* animation */
-  .step {
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.35s ease;
-  }
+ .step {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.35s ease;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}
 
-  .step.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.step.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  height: auto;
+}
 
-  .hidden {
-    display: none;
-  }
 
   /* reset upper right */
   .reset {
