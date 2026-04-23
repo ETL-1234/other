@@ -172,9 +172,11 @@ if (val2.trim()) {
 function showStep(step) {
   if (!step.classList.contains("visible")) {
     step.classList.remove("hidden");
-    requestAnimationFrame(() => {
-      step.classList.add("visible");
-    });
+
+    // force reflow so animation always triggers
+    step.offsetHeight;
+
+    step.classList.add("visible");
   }
 }
 
