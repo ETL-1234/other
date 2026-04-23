@@ -163,17 +163,6 @@ function loadData() {
   if (val2.trim()) showStep(step3);
 }
 
-// --- SHOW STEP ---
-function showStep(step) {
-  if (!step.classList.contains("visible")) {
-    step.classList.remove("hidden");
-
-    // force reflow so animation always triggers
-    step.offsetHeight;
-
-    step.classList.add("visible");
-  }
-}
 
 // --- EVENTS ---
 [input1, input2, input3].forEach(input => {
@@ -185,19 +174,14 @@ function handleInput(e) {
   autoResize(e.target);
   saveData();
 
-  if (input1.value.trim()) {
-    showStep(step2);
-  } else {
-    step2.classList.remove("visible");
-    step2.classList.add("hidden");
-  }
+}
 
-  if (input2.value.trim()) {
-    showStep(step3);
-  } else {
-    step3.classList.remove("visible");
-    step3.classList.add("hidden");
-  }
+  function updateUI() {
+  const has1 = input1.value.trim() !== "";
+  const has2 = input2.value.trim() !== "";
+
+  step2.classList.toggle("visible", has1);
+  step3.classList.toggle("visible", has2);
 }
   
 // --- RESET ---
