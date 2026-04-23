@@ -180,15 +180,21 @@ function showStep(step) {
 });
 
 function handleInput(e) {
-   autoResize(e.target);
+  autoResize(e.target);
   saveData();
 
   if (input1.value.trim()) {
     showStep(step2);
+  } else {
+    step2.classList.remove("visible");
+    step2.classList.add("hidden");
   }
 
   if (input2.value.trim()) {
     showStep(step3);
+  } else {
+    step3.classList.remove("visible");
+    step3.classList.add("hidden");
   }
 }
   
