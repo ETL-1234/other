@@ -111,6 +111,33 @@
   transform: rotate(-20deg);
 }
 
+  @media (prefers-color-scheme: dark) {
+  html, body {
+    background: #000;
+  }
+
+  .card {
+    background: #1a1a1a; /* soft dark instead of pure black */
+  }
+
+  textarea {
+    color: #fff;
+  }
+
+  textarea::placeholder {
+    color: #fff;
+    opacity: 0.5;
+  }
+
+  .reset svg {
+    fill: #ccc;
+  }
+
+  .reset:hover {
+    background: rgba(255,255,255,0.08);
+  }
+}
+
 </style>
 </head>
 
