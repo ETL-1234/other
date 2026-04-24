@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<title>Intention Box</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bad+Script&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #fff;
+    overflow: hidden; /* removes all scrollbars */
+    font-family: 'Inter', sans-serif;
+  }
+
+ 
+  .wrapper {
+    width: 100%;
+    max-width: 600px;
+    margin-top: 0;
+    margin: 0 auto;
+    padding: 20px 20px 0;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .wrapper {
+      padding: 0 40px;
+    }
+  }
+
+  .card {
+    background: #F8F3EF;
+    border-radius: 16px;
+    min-height: 160px;
+    margin-top: 0px;
+    padding: 20px 16px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap:6px;
+  }
+
+  textarea {
+    width: 100%;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    font-size: 18px;
+    font-family: 'Bad Script', cursive;
+    text-align: center;
+    overflow: hidden;
+    max-height: 120px;
+    line-height: 1.3em;       
+    padding: 0;  
+    margin: 0;
+  }
+
+  textarea::placeholder {
+    color: #000;
+    opacity: 0.6;
+  }
+
+  /* animation */
+ .step {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.35s ease;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+}
+
+.step.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  height: auto;
+}
+
+
+  /* reset upper right */
+ .reset {
+  position: fixed;  
+  top: 6px;
+  right: 20px;
+  cursor: pointer;
+  z-index: 10;  
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.reset svg {
+  fill: #5c6b5c;
+}
+
+.reset:hover {
+  background: rgba(0,0,0,0.05);
+  transform: rotate(-20deg);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+  <div class="card">
+
+    <div id="step1" class="step visible">
+      <textarea id="input1" rows="1" placeholder="set your intention"></textarea>
+    </div>
+
+    <div id="step2" class="step">
+      <textarea id="input2" rows="1" placeholder="choose your next action"></textarea>
+    </div>
+
+    <div id="step3" class="step">
+      <textarea id="input3" rows="1" placeholder="define your mindset"></textarea>
+    </div>
+
+  </div>
+
+  <!-- reset under box -->
+<div class="reset" onclick="resetAll()" title="Reset">
+  <svg viewBox="0 0 24 24" width="18" height="18">
+    <path d="M12 5a7 7 0 1 1-6.32 4H3l3.5-3.5L10 9H7.66A5 5 0 1 0 12 7V5z"/>
+  </svg>
+</div>
+
+</div>
+
+<script>
+
+const input1 = document.getElementById("input1");
+const input2 = document.getElementById("input2");
+const input3 = document.getElementById("input3");
+
+const step2 = document.getElementById("step2");
+const step3 = document.getElementById("step3");
+
+// --- AUTO RESIZE ---
+function autoResize(el) {
+  el.style.height = "0px";    
+  el.style.height = el.scrollHeight + "px";
+}
+
+// --- SAFE SAVE (fix for Draftbit timing issues) ---
+function saveData() {
+  try {
+    localStorage.setItem("intention1", input1.value || "");
+    localStorage.setItem("intention2", input2.value || "");
+    localStorage.setItem("intention3", input3.value || "");
+  } catch(e) {}
+}
+
+// --- LOAD ---
+function loadData() {
+  input1.value = localStorage.getItem("intention1") || "";
+  input2.value = localStorage.getItem("intention2") || "";
+  input3.value = localStorage.getItem("intention3") || "";
+
+  autoResize(input1);
+  autoResize(input2);
+  autoResize(input3);
+
+  updateUI(); // 🔥 THIS is what you were missing
+}
+
+
+// --- EVENTS ---
+[input1, input2, input3].forEach(input => {
+  input.addEventListener("input", (e) => handleInput(e));
+  input.addEventListener("blur", (e) => handleInput(e));
+});
+
+function handleInput(e) {
+  autoResize(e.target);
+  saveData();
+  updateUI();
+}
+
+  function updateUI() {
+  const has1 = input1.value.trim() !== "";
+  const has2 = input2.value.trim() !== "";
+
+  step2.classList.toggle("visible", has1);
+  step3.classList.toggle("visible", has2);
+}
+  
+// --- RESET ---
+function resetAll() {
+  input1.value = "";
+  input2.value = "";
+  input3.value = "";
+
+  localStorage.clear();
+
+  autoResize(input1);
+  autoResize(input2);
+  autoResize(input3);
+
+  updateUI();
+
+  input1.focus();
+}
+
+// --- INIT ---
+window.onload = () => {
+  loadData();
+
+  setTimeout(() => {
+    input1.focus();
+  }, 300);
+};
+
+</script>
+
+</body>
+</html>
