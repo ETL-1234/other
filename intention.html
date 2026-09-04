@@ -173,87 +173,9 @@
 
 <script>
 
-  /* ANALYTICS */
-
-const SUPABASE_URL = "https://tppyzexttkuvcobbbmaz.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_VZiTsc0JGVx6tVf2Zu-9uQ_-FwjGpQW";
-
-const SUPABASE_HEADERS = {
-  apikey: SUPABASE_ANON_KEY,
-  Authorization: `Bearer ${SUPABASE_ANON_KEY}`
-};
-
-const APP_NAME = "ETL";
-const CONTENT_NAME = "I am framework";
-
-async function track(eventType, metadata = {}) {
-
-  try {
-
-    const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/analytics_framework`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-          Prefer: "return=minimal"
-        },
-
-        body: JSON.stringify({
-
-          app_name: APP_NAME,
-
-          title_name: CONTENT_NAME,
-
-          event_type: eventType,
-
-          meta_data: metadata
-
-        })
-      }
-    );
-
-    if (!response.ok) {
-
-      const errorText = await response.text();
-
-      console.error(
-        "Analytics HTTP Error:",
-        response.status,
-        errorText
-      );
-
-    }
-
-  } catch (err) {
-
-    console.error(
-      "Analytics network error:",
-      err
-    );
-
-  }
-}
-
 const input1 = document.getElementById("input1");
 const input2 = document.getElementById("input2");
 const input3 = document.getElementById("input3");
-
-  /* ANALYTICS STATE */
-
-const INTENTION_CREATED_KEY = "intention_created_at";
-
-let analyticsLastValues = {
-  intention: "",
-  next_action: "",
-  mindset: ""
-};
-
-let intentionCreatedAt =
-  localStorage.getItem(INTENTION_CREATED_KEY) || null;
 
 const step2 = document.getElementById("step2");
 const step3 = document.getElementById("step3");
@@ -265,214 +187,38 @@ function autoResize(el) {
 }
 
 // --- SAFE SAVE (fix for Draftbit timing issues) ---
-
-  function saveData() {
-
+function saveData() {
   try {
-
-    localStorage.setItem(
-      "intention1",
-      input1.value || ""
-    );
-
-    localStorage.setItem(
-      "intention2",
-      input2.value || ""
-    );
-
-    localStorage.setItem(
-      "intention3",
-      input3.value || ""
-    );
-
+    localStorage.setItem("intention1", input1.value || "");
+    localStorage.setItem("intention2", input2.value || "");
+    localStorage.setItem("intention3", input3.value || "");
   } catch(e) {}
-
 }
 
 // --- LOAD ---
 function loadData() {
-
-  input1.value =
-    localStorage.getItem("intention1") || "";
-
-  input2.value =
-    localStorage.getItem("intention2") || "";
-
-  input3.value =
-    localStorage.getItem("intention3") || "";
-
-  intentionCreatedAt =
-    localStorage.getItem(INTENTION_CREATED_KEY) || null;
-
-  analyticsLastValues = {
-
-    intention: input1.value.trim(),
-
-    next_action: input2.value.trim(),
-
-    mindset: input3.value.trim()
-
-  };
+  input1.value = localStorage.getItem("intention1") || "";
+  input2.value = localStorage.getItem("intention2") || "";
+  input3.value = localStorage.getItem("intention3") || "";
 
   autoResize(input1);
   autoResize(input2);
   autoResize(input3);
 
-  updateUI();
+  updateUI(); // 🔥 THIS is what you were missing
 }
 
 
 // --- EVENTS ---
 [input1, input2, input3].forEach(input => {
-
-  input.addEventListener("input", (e) => {
-
-    autoResize(e.target);
-
-    saveData();
-
-    updateUI();
-
-  });
-
-
-  input.addEventListener("blur", (e) => {
-
-    handleAnalyticsBlur(e.target);
-
-  });
-
+  input.addEventListener("input", (e) => handleInput(e));
+  input.addEventListener("blur", (e) => handleInput(e));
 });
 
-    /* ANALYTICS */
-
-function handleAnalyticsBlur(input) {
-
-  const value = input.value.trim();
-
-  if (!value) {
-    return;
-  }
-
-
-  /* STEP 1 — INTENTION CREATED */
-
-  if (
-    input === input1 &&
-    !intentionCreatedAt
-  ) {
-
-    intentionCreatedAt =
-      new Date().toISOString();
-
-    localStorage.setItem(
-      INTENTION_CREATED_KEY,
-      intentionCreatedAt
-    );
-
-
-    track("entry_created", {
-
-      intention: value,
-
-      created_at: intentionCreatedAt
-
-    });
-
-
-    analyticsLastValues.intention = value;
-
-    return;
-  }
-
-
-  /* INTENTION UPDATED */
-
-  if (
-    input === input1 &&
-    value !== analyticsLastValues.intention
-  ) {
-
-    track("intention_updated", {
-
-      previous_intention:
-        analyticsLastValues.intention,
-
-      intention: value,
-
-      updated_at:
-        new Date().toISOString()
-
-    });
-
-
-    analyticsLastValues.intention = value;
-
-    return;
-  }
-
-
-  /* STEP 2 COMPLETED */
-
-  if (
-    input === input2 &&
-    value !== analyticsLastValues.next_action
-  ) {
-
-    track("step_completed", {
-
-      step: 2,
-
-      field: "next_action",
-
-      value: value,
-
-      intention:
-        input1.value.trim(),
-
-      created_at:
-        intentionCreatedAt
-
-    });
-
-
-    analyticsLastValues.next_action = value;
-
-    return;
-  }
-
-
-  /* STEP 3 COMPLETED */
-
-  if (
-    input === input3 &&
-    value !== analyticsLastValues.mindset
-  ) {
-
-    track("step_completed", {
-
-      step: 3,
-
-      field: "mindset",
-
-      value: value,
-
-      intention:
-        input1.value.trim(),
-
-      next_action:
-        input2.value.trim(),
-
-      created_at:
-        intentionCreatedAt
-
-    });
-
-
-    analyticsLastValues.mindset = value;
-
-  }
-
+function handleInput(e) {
+  autoResize(e.target);
+  saveData();
+  updateUI();
 }
 
   function updateUI() {
@@ -485,81 +231,11 @@ function handleAnalyticsBlur(input) {
   
 // --- RESET ---
 function resetAll() {
-
-  const intention =
-    input1.value.trim();
-
-  const nextAction =
-    input2.value.trim();
-
-  const mindset =
-    input3.value.trim();
-
-
-  /* ANALYTICS */
-
-  if (intention && intentionCreatedAt) {
-
-    const clearedAt =
-      new Date().toISOString();
-
-
-    const createdTime =
-      new Date(intentionCreatedAt).getTime();
-
-    const clearedTime =
-      new Date(clearedAt).getTime();
-
-
-    const daysActive =
-      Math.floor(
-        (clearedTime - createdTime) /
-        (1000 * 60 * 60 * 24)
-      );
-
-
-    track("entry_cleared", {
-
-      intention: intention,
-
-      next_action: nextAction,
-
-      mindset: mindset,
-
-      created_at: intentionCreatedAt,
-
-      cleared_at: clearedAt,
-
-      days_active: daysActive
-
-    });
-
-  }
-
-
-  /* CLEAR ONLY THIS COMPONENT'S STORAGE */
-
   input1.value = "";
   input2.value = "";
   input3.value = "";
 
-  localStorage.removeItem("intention1");
-  localStorage.removeItem("intention2");
-  localStorage.removeItem("intention3");
-  localStorage.removeItem(INTENTION_CREATED_KEY);
-
-
-  intentionCreatedAt = null;
-
-
-  analyticsLastValues = {
-
-    intention: "",
-    next_action: "",
-    mindset: ""
-
-  };
-
+  localStorage.clear();
 
   autoResize(input1);
   autoResize(input2);
@@ -568,7 +244,6 @@ function resetAll() {
   updateUI();
 
   input1.focus();
-
 }
 
 // --- INIT ---
