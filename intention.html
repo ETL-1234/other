@@ -173,6 +173,65 @@
 
 <script>
 
+<script>
+
+/* ANALYTICS */
+
+const SUPABASE_URL = "https://tppyzexttkuvcobbbmaz.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_VZiTsc0JGVx6tVf2Zu-9uQ_-FwjGpQW";
+
+const SUPABASE_HEADERS = {
+  apikey: SUPABASE_ANON_KEY,
+  Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+};
+
+const APP_NAME = "ETL";
+const CONTENT_NAME = "I am framework";
+
+async function track(eventType, metaData = {}) {
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/analytics_framework`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          Prefer: "return=minimal"
+        },
+
+        body: JSON.stringify({
+          app_name: APP_NAME,
+          title_name: CONTENT_NAME,
+          event_type: eventType,
+          meta_data: metaData
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        "Analytics HTTP Error:",
+        response.status,
+        errorText
+      );
+    }
+
+  } catch (err) {
+    console.error("Analytics network error:", err);
+  }
+}
+
+
+/* ANALYTICS STORAGE */
+
+const INTENTION_CREATED_KEY = "intention_created_time";
+
+
 const input1 = document.getElementById("input1");
 const input2 = document.getElementById("input2");
 const input3 = document.getElementById("input3");
@@ -216,9 +275,32 @@ function loadData() {
 });
 
 function handleInput(e) {
+
   autoResize(e.target);
   saveData();
   updateUI();
+
+
+  /* ANALYTICS  Only track the INTENTION   */
+
+  if (
+    e.target === input1 &&
+    input1.value.trim() !== "" &&
+    !localStorage.getItem(INTENTION_CREATED_KEY)
+  ) {
+
+    const createdTime = new Date().toISOString();
+
+    localStorage.setItem(
+      INTENTION_CREATED_KEY,
+      createdTime
+    );
+
+    track("entry_created", {
+      intention: input1.value.trim(),
+      created_time: createdTime
+    });
+  }
 }
 
   function updateUI() {
@@ -231,6 +313,49 @@ function handleInput(e) {
   
 // --- RESET ---
 function resetAll() {
+
+  /* ANALYTICS Capture the intention before clearing storage   */
+
+  const intention = input1.value.trim();
+  const createdTime = localStorage.getItem(
+    INTENTION_CREATED_KEY
+  );
+
+  if (intention !== "") {
+
+    const clearedTime = new Date().toISOString();
+
+    let daysActive = null;
+
+    if (createdTime) {
+
+      const createdDate = new Date(createdTime);
+      const clearedDate = new Date(clearedTime);
+
+      const millisecondsActive =
+        clearedDate - createdDate;
+
+      daysActive = Math.floor(
+        millisecondsActive / (1000 * 60 * 60 * 24)
+      );
+    }
+
+    track("entry_cleared", {
+
+      intention: intention,
+
+      created_time: createdTime,
+
+      cleared_time: clearedTime,
+
+      days_active: daysActive
+
+    });
+  }
+
+
+  /* EXISTING RESET BEHAVIOR */
+
   input1.value = "";
   input2.value = "";
   input3.value = "";
